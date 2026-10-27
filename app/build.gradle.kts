@@ -4,6 +4,11 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// CI signs every build with the one release key, so each GitHub release installs over the last.
+// Without these variables (local builds) the debug key is used instead.
+val releaseKeystore = System.getenv("RELEASE_KEYSTORE_FILE")?.let(::file)?.takeIf { it.exists() }
+val releaseKeystorePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
+
 android {
     namespace = "com.tvapkmanager.app"
     compileSdk = 35
@@ -12,13 +17,32 @@ android {
         applicationId = "com.tvapkmanager.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 4
+        versionName = "0.3.0"
+
+        // Where SelfUpdater looks for newer releases.
+        buildConfigField("String", "UPDATE_REPO", "\"albertmarkish/android-tv-apk-manager\"")
+    }
+
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = releaseKeystore
+                storePassword = releaseKeystorePassword
+                keyAlias = "apkmanager"
+                keyPassword = releaseKeystorePassword
+            }
+        }
     }
 
     buildTypes {
+        val releaseSigning = signingConfigs.findByName("release")
         release {
             isMinifyEnabled = false
+            signingConfig = releaseSigning ?: signingConfigs.getByName("debug")
+        }
+        debug {
+            if (releaseSigning != null) signingConfig = releaseSigning
         }
     }
 
@@ -28,6 +52,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }

@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         controller = ApkManagerController(this, scope, permissionLauncher)
+        if (savedInstanceState == null) controller.checkForUpdate()
 
         setContent {
             LaunchedEffect(Unit) {
@@ -40,6 +41,7 @@ class MainActivity : ComponentActivity() {
                 state = controller.state,
                 onRescan = controller::scan,
                 onRowClick = controller::onRowClicked,
+                onUpdate = controller::installUpdate,
                 onAllowAccess = controller::requestAccess,
                 onOpenAppSettings = controller::openAppSettings,
             )
