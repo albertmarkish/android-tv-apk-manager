@@ -13,6 +13,8 @@ Finds every `.apk` file on the TV and installs it with one click of the remote. 
   - **Can't read file**: damaged, still downloading, or a split APK bundle (`.apks`/`.xapk`, not supported yet).
 - **Installs with Android's own installer.** Click a file, then confirm on the system screen. The list updates when the install finishes.
 
+- **Updates itself.** At launch it checks this repo's GitHub releases. When a newer APK Manager is out, an **Update to x.y.z** button appears: click it, confirm on the system screen, and reopen the app. **Check for updates** does the same check by hand.
+
 Files worth installing are listed first, then the ones already installed.
 
 ## First run on the Shield
@@ -35,7 +37,20 @@ Needs JDK 17 and the Android SDK (Android Studio installs both).
 ./gradlew :core:test :app:assembleDebug
 ```
 
-Every pull request is built by GitHub Actions, and the debug APK is attached to the run under **Artifacts**.
+Every pull request is built by GitHub Actions, and the APKs are attached to the run under **Artifacts**.
+
+## Releases and signing
+
+Android only installs an update when it's signed with the same key as the installed app, so CI signs every build with one release key kept in two repository secrets:
+
+- `RELEASE_KEYSTORE_BASE64`: the PKCS12 keystore (alias `apkmanager`), base64 encoded.
+- `RELEASE_KEYSTORE_PASSWORD`: its password, used for both the store and the key.
+
+Keep a backup of the keystore somewhere safe. If it's lost, no future build can update the installed app, and it has to be uninstalled and installed again.
+
+To publish a release, raise `versionName` and `versionCode` in `app/build.gradle.kts` and merge to `main`. CI creates the `vX.Y.Z` release with `apk-manager-X.Y.Z.apk` attached, which is what the app downloads. Merges that keep the same version don't publish anything.
+
+The app reads releases without signing in to GitHub, so the repository (or wherever `UPDATE_REPO` points) has to be public.
 
 ## Install on an NVIDIA Shield
 
@@ -44,3 +59,5 @@ Every pull request is built by GitHub Actions, and the debug APK is attached to 
 3. On your computer: `adb connect <shield-ip>:5555`, accept the prompt on the TV, then `adb install -r app-debug.apk`.
 
 After that, APK Manager can install everything else, including its own updates.
+
+Builds from before 0.3.0 were signed with a throwaway debug key. To move to the release-signed builds, uninstall APK Manager once and install the APK from the latest release. Updates install in place from then on.

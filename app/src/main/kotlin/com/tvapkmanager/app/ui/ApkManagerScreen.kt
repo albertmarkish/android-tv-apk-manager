@@ -52,6 +52,7 @@ fun ApkManagerScreen(
     state: UiState,
     onRescan: () -> Unit,
     onRowClick: (ApkRow) -> Unit,
+    onUpdate: () -> Unit,
     onAllowAccess: () -> Unit,
     onOpenAppSettings: () -> Unit,
 ) {
@@ -65,7 +66,7 @@ fun ApkManagerScreen(
             when (state.hasAccess) {
                 null -> Unit
                 false -> AccessScreen(onAllowAccess, onOpenAppSettings)
-                true -> ApkList(state, onRescan, onRowClick)
+                true -> ApkList(state, onRescan, onRowClick, onUpdate)
             }
             state.message?.let { MessageBar(it) }
         }
@@ -109,6 +110,7 @@ private fun ColumnScope.ApkList(
     state: UiState,
     onRescan: () -> Unit,
     onRowClick: (ApkRow) -> Unit,
+    onUpdate: () -> Unit,
 ) {
     val rescan = remember { FocusRequester() }
     val firstRow = remember { FocusRequester() }
@@ -120,8 +122,11 @@ private fun ColumnScope.ApkList(
             Title()
             Text(summary(state), color = SecondaryText, style = MaterialTheme.typography.bodyMedium)
         }
-        Button(onClick = onRescan, modifier = Modifier.focusRequester(rescan)) {
-            Text(if (state.scanning) "Scanning…" else "Rescan")
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            UpdateButton(state, onUpdate)
+            Button(onClick = onRescan, modifier = Modifier.focusRequester(rescan)) {
+                Text(if (state.scanning) "Scanning…" else "Rescan")
+            }
         }
     }
     Spacer(Modifier.height(16.dp))
@@ -152,6 +157,18 @@ private fun ColumnScope.ApkList(
                 modifier = if (index == 0) Modifier.focusRequester(firstRow) else Modifier,
             )
         }
+    }
+}
+
+/** Stands out once a newer APK Manager is out; otherwise a quiet way to check by hand. */
+@Composable
+private fun UpdateButton(state: UiState, onUpdate: () -> Unit) {
+    val progress = state.updateProgress
+    val update = state.update
+    when {
+        progress != null -> Button(onClick = {}) { Text("Downloading $progress%") }
+        update != null -> Button(onClick = onUpdate) { Text("Update to ${update.version}") }
+        else -> OutlinedButton(onClick = onUpdate) { Text("Check for updates") }
     }
 }
 
