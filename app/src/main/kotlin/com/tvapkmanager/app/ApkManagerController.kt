@@ -81,7 +81,7 @@ class ApkManagerController(
 
     fun openAppSettings() {
         if (!StorageAccess.openAppSettings(activity)) {
-            showMessage("Open Settings > Apps > APK Manager > Permissions and turn on Storage.")
+            showMessage("Open Settings > Apps > Special app access > All files access and turn on APK Manager.")
         }
     }
 

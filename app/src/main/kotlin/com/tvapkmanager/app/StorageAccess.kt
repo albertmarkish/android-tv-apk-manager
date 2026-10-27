@@ -11,9 +11,9 @@ import android.provider.Settings
 import androidx.activity.result.ActivityResultLauncher
 
 /**
- * Reading every folder needs one of two things. The app targets API 29 with
- * requestLegacyExternalStorage, so on the Shield (Android 11) the normal storage prompt is enough.
- * If a future Android ignores legacy storage, it falls back to "All files access".
+ * APK files aren't media, so on Android 11 and newer only "All files access" can see them in
+ * Downloads and on USB drives. Android 10 and older use the normal storage prompt, with
+ * requestLegacyExternalStorage covering Android 10.
  */
 object StorageAccess {
 
@@ -26,7 +26,7 @@ object StorageAccess {
     private fun needsAllFilesAccess(): Boolean =
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageLegacy()
 
-    /** Returns false when this TV has no screen for granting access. */
+    /** Returns false when this TV has no screen for granting access, so the caller shows ADB steps. */
     fun request(activity: Activity, permissionLauncher: ActivityResultLauncher<String>): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && needsAllFilesAccess()) {
             return activity.startFirstAvailable(
@@ -38,7 +38,12 @@ object StorageAccess {
         return true
     }
 
-    /** For when the prompt was turned down with "Don't ask again" and no longer appears. */
-    fun openAppSettings(activity: Activity): Boolean =
-        activity.startFirstAvailable(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, activity.packageUri()))
+    /** For when the direct screen didn't open, or the prompt was turned down with "Don't ask again". */
+    fun openAppSettings(activity: Activity): Boolean {
+        val appDetails = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, activity.packageUri())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && needsAllFilesAccess()) {
+            return activity.startFirstAvailable(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION), appDetails)
+        }
+        return activity.startFirstAvailable(appDetails)
+    }
 }

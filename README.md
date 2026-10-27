@@ -17,7 +17,7 @@ Files worth installing are listed first, then the ones already installed.
 
 ## First run on the Shield
 
-1. Open **APK Manager** and choose **Allow access** so it can read storage.
+1. Open **APK Manager** and choose **Allow access**. Turn on APK Manager in the **All files access** list and press Back. If that screen doesn't open, it's under **Settings > Apps > Special app access > All files access**. As a last resort, from a computer: `adb shell appops set --uid com.tvapkmanager.app MANAGE_EXTERNAL_STORAGE allow`.
 2. The first time you install something, Android asks to allow APK Manager to install apps. Turn it on, press Back, and click the file again. On the Shield this switch lives in **Settings > Device Preferences > Security & restrictions > Unknown sources**.
 
 ## Project layout
@@ -25,7 +25,7 @@ Files worth installing are listed first, then the ones already installed.
 - `core/` is plain Kotlin with no Android code: the folder scan (`ApkScanner`) and the installed/update/older rules (`InstallStatus`). It has unit tests.
 - `app/` is the Android TV app: Jetpack Compose for TV. `ApkReader` reads each APK with the package manager, `ApkInstaller` and `InstallResultReceiver` run the install, and `StorageAccess` handles the storage permission.
 
-The app targets API 29 on purpose. With `requestLegacyExternalStorage`, that lets a normal permission prompt read every folder on the Shield (Android 11). Newer targets would need the "All files access" screen, which Android TV builds often leave out. The app falls back to that screen on any device that ignores legacy storage.
+The app targets the current Android API level, because Google Play Protect blocks sideloaded apps that target old ones. APK files aren't media, so on Android 11 and newer the app needs **All files access** (`MANAGE_EXTERNAL_STORAGE`) to see them in Downloads and on USB drives.
 
 ## Build
 

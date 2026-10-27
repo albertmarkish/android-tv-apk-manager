@@ -9,9 +9,10 @@
         android:name="android.hardware.touchscreen"
         android:required="false" />
 
-    <!-- Finding APK files anywhere on internal storage and USB drives. -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- Fallback for devices that ignore legacy storage; see StorageAccess. -->
+    <!-- Finding APK files anywhere on internal storage and USB drives; see StorageAccess. -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
     <uses-permission
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />

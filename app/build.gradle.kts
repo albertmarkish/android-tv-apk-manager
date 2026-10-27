@@ -11,12 +11,9 @@ android {
     defaultConfig {
         applicationId = "com.tvapkmanager.app"
         minSdk = 26
-        // Kept at 29 on purpose: with requestLegacyExternalStorage this is the only way to read every
-        // folder (Downloads, USB drives) with a normal permission prompt on Android TV, where the
-        // "All files access" settings screen is often missing. See StorageAccess.
-        targetSdk = 29
-        versionCode = 1
-        versionName = "0.1.0"
+        targetSdk = 35
+        versionCode = 2
+        versionName = "0.2.0"
     }
 
     buildTypes {
@@ -32,10 +29,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    lint {
-        disable += setOf("ExpiredTargetSdkVersion", "OldTargetApi")
     }
 }
 

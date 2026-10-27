@@ -80,7 +80,8 @@ private fun AccessScreen(onAllowAccess: () -> Unit, onOpenAppSettings: () -> Uni
         Title()
         Spacer(Modifier.height(24.dp))
         Text(
-            "To find APK files in Downloads and on USB drives, APK Manager needs to read your TV's storage.",
+            "To find APK files in Downloads and on USB drives, APK Manager needs All files access. " +
+                "Choose Allow access, turn on APK Manager, then press Back.",
             color = PrimaryText,
             style = MaterialTheme.typography.bodyLarge,
         )
@@ -91,7 +92,7 @@ private fun AccessScreen(onAllowAccess: () -> Unit, onOpenAppSettings: () -> Uni
         }
         Spacer(Modifier.height(12.dp))
         Text(
-            "If no prompt appears, use Open app settings and turn on Storage.",
+            "If nothing opens, go to Settings > Apps > Special app access > All files access.",
             color = SecondaryText,
             style = MaterialTheme.typography.bodySmall,
         )
