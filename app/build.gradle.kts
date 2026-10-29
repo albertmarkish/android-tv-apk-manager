@@ -17,8 +17,8 @@ android {
         applicationId = "com.tvapkmanager.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 4
-        versionName = "0.3.0"
+        versionCode = 5
+        versionName = "0.3.1"
 
         // Where SelfUpdater looks for newer releases.
         buildConfigField("String", "UPDATE_REPO", "\"albertmarkish/android-tv-apk-manager\"")
