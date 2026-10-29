@@ -69,7 +69,9 @@ jobs:
             exit 1
           fi
           cp app/build/outputs/apk/release/app-release.apk "apk-manager-$version.apk"
-          gh release create "v$version" "apk-manager-$version.apk" \
+          # The unversioned copy keeps releases/latest/download/apk-manager.apk working as a permanent link.
+          cp app/build/outputs/apk/release/app-release.apk apk-manager.apk
+          gh release create "v$version" "apk-manager-$version.apk" apk-manager.apk \
             --title "APK Manager $version" \
             --target "$GITHUB_SHA" \
             --generate-notes
