@@ -17,6 +17,8 @@
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Checking GitHub for newer versions of APK Manager itself; see SelfUpdater. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Comparing each APK with the installed version of the same app. -->
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
